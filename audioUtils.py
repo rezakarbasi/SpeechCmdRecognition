@@ -146,6 +146,7 @@ def Mp32Numpy(folder: str):
         np.save(file + '.npy', wave.numpy())
         # breakpoint()
 
-# Mp32Wav('./12words/')
-# WAV2Numpy('./12words/')
-Mp32Numpy('./12words/')
+if __name__=="__main__":
+    # Mp32Wav('./12words/')
+    # WAV2Numpy('./12words/')
+    Mp32Numpy('./12words/')
