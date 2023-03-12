@@ -3,3 +3,7 @@ pandas>=0.25
 tqdm
 librosa
 matplotlib
+numpy
+scikit-learn>=0.24.1
+pydub
+torchaudio>=0.9.1
