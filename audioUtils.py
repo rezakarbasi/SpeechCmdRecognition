@@ -7,7 +7,8 @@ import numpy as np
 from tqdm import tqdm
 import tensorflow as tf
 import matplotlib.pyplot as plt
-
+from pydub import AudioSegment
+import torchaudio
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
@@ -62,7 +63,7 @@ def WAV2Numpy(folder, sr=None):
 
         # if we want to write the file later
         np.save(file + '.npy', y.numpy())
-        os.remove(file)
+        # os.remove(file)
 
 # this was supposed to be tfio.audio.spectrogram
 def spectrogram_fn(input_signal, nfft, window, stride, name=None):
@@ -113,3 +114,38 @@ def normalized_mel_spectrogram(x, sr=16000, n_mel_bins=80):
     std = tf.math.reduce_std(log_mel_spectrograms)
 
     return (log_mel_spectrograms - avg) / std
+
+def Mp32Wav(folder:str):
+    allFiles = []
+    for root, dirs, files in os.walk(folder):
+        allFiles += [os.path.join(root, f) for f in files
+                     if f.endswith('.mp3')]
+
+    for file in tqdm(allFiles):
+        file_name = str(file)
+        sound = AudioSegment.from_mp3(file_name)
+        sound.export(file_name.replace(".mp3", ".wav"), format="wav")
+
+        # x = tf.io.read_file(str(file))
+        # y, sample_rate = tf.audio.decode_wav(x, desired_channels=1, desired_samples=16000,)
+
+        # # if we want to write the file later
+        # np.save(file + '.npy', y.numpy())
+        os.remove(file)
+
+def Mp32Numpy(folder: str):
+    allFiles = []
+    for root, dirs, files in os.walk(folder):
+        allFiles += [os.path.join(root, f) for f in files
+                     if f.endswith('.mp3')]
+    
+    for file in tqdm(allFiles):
+        file_name = str(file)
+        wave, sr = torchaudio.load(file_name)
+        wave = torchaudio.functional.resample(wave, orig_freq=sr, new_freq=16000)
+        np.save(file + '.npy', wave.numpy())
+        # breakpoint()
+
+# Mp32Wav('./12words/')
+# WAV2Numpy('./12words/')
+Mp32Numpy('./12words/')
